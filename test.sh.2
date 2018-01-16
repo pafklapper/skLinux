@@ -1,0 +1,34 @@
+targetDisk=/dev/sda
+
+mkdir -p /mnt/SLICE-A; mkdir -p /mnt/SLICE-B
+if [ -z "$(mount  | grep ${targetDisk}3)" ]; then mount ${targetDisk}3 /mnt/SLICE-A; fi
+if [ -z "$(mount  | grep ${targetDisk}4)" ]; then mount ${targetDisk}4 /mnt/SLICE-B; fi
+
+find /boot -name "*-fallback.img" -exec mv {} {}.disabled \;
+
+grub-mkconfig -o /boot/grub/grub.cfg || fatalError
+
+uuidSliceA=$(blkid -o value -s UUID ${targetDisk}3)
+uuidSliceB=$(blkid -o value -s UUID ${targetDisk}4)
+
+menuStringSliceA="$(cat /boot/grub/grub.cfg | grep -e $uuidSliceA | grep -e "^menuentry" )"
+menuStringSliceB="$(cat /boot/grub/grub.cfg | grep -e $uuidSliceB | grep -e "^menuentry" )"
+
+menuNameStringSliceA="$(echo $menuStringSliceA | cut -f2 -d\')"
+menuNameStringSliceB="$(echo $menuStringSliceB | cut -f2 -d\')"
+
+newMenuNameStringSliceA="Installatie van 19 juni 1948"
+newMenuNameStringSliceA="Installatie van 25 aug 1949"
+
+
+newMenuStringSliceA="$(echo $menuStringSliceA | sed "s|$menuNameStringSliceA|$newMenuNameStringSliceA|g")"
+newMenuStringSliceB="$(echo $menuStringSliceB | sed "s|$menuNameStringSliceB|$newMenuNameStringSliceB|g")"
+
+
+if [ -n "$newMenuStringSliceA" ];then
+	sed -i "s|$menuStringSliceA|$newMenuStringSliceA|g" /boot/grub/grub.cfg
+fi
+
+if [ -n "$newMenuStringSliceB" ]; then
+	sed -i "s|$menuStringSliceB|$newMenuStringSliceB|g" /boot/grub/grub.cfg
+fi
