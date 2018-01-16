@@ -87,7 +87,7 @@ function check_fail {
 			exit 1
 		fi
 	else
-		>&2 echo "OK!"
+		>&2 echo -e "\e[32m\e[1mOK\e[0m"
 		if [ -z "$(grep -e '^finished=' $VAR_f )"  ]; then
                 	echo "finished=$runner" >> $VAR_f
 		else
@@ -133,12 +133,12 @@ check_fail $?
 
 announce "Setting up bootloader (GRUB)..." && \
 arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --recheck --removable && \
-arch-chroot /mnt sed -i '/^GRUB_TERMINAL/c\GRUB_TERMINAL=console' /etc/default/grub && \
-arch-chroot /mnt sed -i '/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved' /etc/default/grub && \
-arch-chroot /mnt sed -i '/^GRUB_HIDDEN_TIMEOUT=/c\GRUB_HIDDEN_TIMEOUT=5' /etc/default/grub && \
-arch-chroot /mnt sed -i '/^GRUB_SAVEDEFAULT=/c\GRUB_SAVEDEFAULT=\"true\"' /etc/default/grub && \
-arch-chroot /mnt sed -i '/^GRUB_DISABLE_SUBMENU=/c\GRUB_DISABLE_SUBMENU=y' /etc/default/grub && \
-arch-chroot /mnt echo "## Uncomment to disable submenu\nGRUB_DISABLE_SUBMENU=y" >> /etc/default/grub && \
+arch-chroot /mnt sed -i '/GRUB_TERMINAL/c\GRUB_TERMINAL=console' /etc/default/grub && \
+arch-chroot /mnt sed -i '/GRUB_DEFAULT=/c\GRUB_DEFAULT=saved' /etc/default/grub && \
+arch-chroot /mnt sed -i '/GRUB_HIDDEN_TIMEOUT=/c\GRUB_HIDDEN_TIMEOUT=5' /etc/default/grub && \
+arch-chroot /mnt sed -i '/GRUB_SAVEDEFAULT=/c\GRUB_SAVEDEFAULT=\"true\"' /etc/default/grub && \
+arch-chroot /mnt sed -i '/GRUB_DISABLE_SUBMENU=/c\GRUB_DISABLE_SUBMENU=y' /etc/default/grub && \
+arch-chroot /mnt echo -e "## Uncomment to disable submenu\nGRUB_DISABLE_SUBMENU=y" >> /etc/default/grub && \
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 check_fail $?
 

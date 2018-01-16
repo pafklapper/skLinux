@@ -174,15 +174,17 @@ announce "Mounting filesystems..." && \
 mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDisk}3 /mnt/SLICE-A && mount ${targetDisk}4 /mnt/SLICE-B 
 check_fail $?
 
-announce "Setting package mirror..." && \
+announce "Setting package mirror for BEHEER..." && \
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && sed -i '/ /s/^#//g' /etc/pacman.d/mirrorlist
+check_fail $?
 
 announce "Installing packages to first slice..." && \
 pacstrap /mnt/SLICE-A ${packages}
 check_fail $?
 
-announce "Setting package mirror..." && \
+announce "Setting package mirrors for SLICES..." && \
 arch-chroot /mnt/SLICE-A mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && arch-chroot /mnt/SLICE-A wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && arch-chroot /mnt/SLICE-A sed -i '/ /s/^#//g' /etc/pacman.d/mirrorlist
+check_fail $?
 
 announce "Setting up networking..." && \
 for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot /mnt/SLICE-A systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
