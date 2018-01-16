@@ -15,21 +15,31 @@ initVars
 
 # constants initialisation
 DEBUG="false"
+QUIET="false"
 targetRootPw="1234"
 targetHostname="skLinuxClient"
 packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
 
 # variables initialisation
 # do not change this line! 
-VAR_f=/tmp/./install.sh.vZn
+VAR_f=$installationDirectory/stage0.runnerFile
 
 function debug {
-	if [ "$DEBUG" = "TRUE" ]; then
+	if [ "$DEBUG" = "true" ]; then
 		return 0
 	else
 		return 1;
 	fi
 }
+
+function quiet {
+	if [ "$QUIET" = "true" ]; then
+		return 0
+	else
+		return 1;
+	fi
+}
+
 
 function set_error_f {
 if [ "$VAR_f" = "FALSE" ]; then
@@ -62,10 +72,21 @@ function announce {
 		SKIP=
                 sed -i '/^SKIP=/d' $VAR_f
 		>&2 echo -n "$1"
+
+		#temporarily disable stdout
+		quiet && exec 4<&1
+		quiet && exec 5<&2
+		quiet && exec 1>${logFile}
+		quiet && exec 2>${logFile}
+
 	fi
 }
 
 function check_fail {
+	# reenable stdout
+	quiet && exec 1<&4
+	quiet && exec 2<&5
+
 	if [[ $1 -ne 0 ]]; then
 		eval `envsubst < $VAR_f`
 		if [ -n "$SKIP" ]; then

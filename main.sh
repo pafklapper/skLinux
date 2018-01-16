@@ -11,16 +11,16 @@ installationDirectory="$(dirname $(realpath "$0"))"
 logFile=/var/log/skLinux.log
 }
 
+main()
+{
 initVars
 
+cd $installationDirectory
 logp beginsection
 logp info  "wachten op de netwerkverbinding... " && waitForNetwork
 
 
-cd $installationDirectory
-
 mountEnv=""
-
 # check which platform 
 if [ -n "$(mount | grep "${targetDisk}2 on / type" )" ]; then
 	# dit is de beheer partitie
@@ -58,20 +58,18 @@ if [ "$mountEnv" = "be" ]; then
 		# checken voor fouten?
 	fi
 elif [ -n "$mountEnv" ]; then
+	# check for device validity
 	logp info "Installatie zal in gang worden gezet!"
-
+	sh $installationDirectory/stage0.sh
 elif [ "$mountEnv" = "A" ] || [ "$mountEnv" = "B" ]; then
 	# checken voor desktop files update?
-	logp info "dit is Slice $A : checken voor updates? NIET AF"
-
+	logp info "dit is Slice $mountEnv"
+	# checken voor updates?
 	systemctl start gdm
 fi
 
 # set reboot options
-
 # start login manager lastly 
+}
 
-
-clear
-echo "UW VRAGEN EN ANTWOORDEN HIER"
-read
+main $@
