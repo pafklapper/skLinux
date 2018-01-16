@@ -40,21 +40,6 @@ function quiet {
 	fi
 }
 
-
-function set_error_f {
-if [ "$VAR_f" = "FALSE" ]; then
-	err_f=`mktemp /tmp/$0.XXX` || { echo couldnt make ERROR file; exit 1; }
-	sed -i "/^VAR_f=FALSE/c\VAR_f=$err_f" $0
-	debug && echo "setting error file: $err_f"
-	VAR_f=$err_f
-elif [ ! -f $VAR_f ]; then
-	debug && echo "error file $VAR_f not found! creating new error file.."
-	sed -i "/^VAR_f=/c\VAR_f=FALSE" $0
-	sh $0
-	exit 0;
-fi
-}
-
 function announce {
 	#run now?
 
@@ -70,7 +55,7 @@ function announce {
 		return 1;
 	else
 		SKIP=
-                sed -i '/^SKIP=/d' $VAR_f
+        sed -i '/^SKIP=/d' $VAR_f
 		>&2 echo -n "$1"
 
 		#temporarily disable stdout
@@ -80,6 +65,8 @@ function announce {
 		quiet && exec 2>${logFile}
 
 	fi
+
+return 0
 }
 
 function check_fail {
@@ -134,7 +121,7 @@ parted --script ${targetDisk} mklabel gpt mkpart ESP fat32 1MiB 200MiB mkpart pr
 check_fail $?
 
 announce "Setting package mirror..." && \
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && sed -i '//s/^/#/g' /etc/pacman.d/mirrorlist
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && sed -i '/ /s/^#//g' /etc/pacman.d/mirrorlist
 check_fail $?
 
 announce "Installing base packages..." && \
