@@ -43,7 +43,7 @@ fi
 # check if this is an install env
 
 if [ "$mountEnv" = "be" ]; then
-	if [ -z "$(lsblk -f | grep SLICE-A) ] || [ -z "$(lsblk -f | grep SLICE-B) ]; then
+	if [ -z "$(lsblk -f | grep SLICE-A)" ] || [ -z "$(lsblk -f | grep SLICE-B)" ]; then
 		logp info "Installatie zal worden voorgezet!..."
 		if sh /srv/skLinux/stage1.sh; then
 			logp info "Installatie succesvol!"

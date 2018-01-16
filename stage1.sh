@@ -24,7 +24,7 @@ packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-z
 
 # variables initialisation
 # do not change this line! 
-VAR_f=/tmp/./install.sh.vZn
+VAR_f=$installationDirectory/stage1.runnerFile
 
 # meta functions
 
@@ -42,20 +42,6 @@ function quiet {
 	else
 		return 1;
 	fi
-}
-
-function set_error_f {
-if [ "$VAR_f" = "FALSE" ]; then
-	err_f=`mktemp /tmp/$0.XXX` || { echo couldnt make ERROR file; exit 1; }
-	sed -i "/^VAR_f=FALSE/c\VAR_f=$err_f" $0
-	debug && echo "setting error file: $err_f"
-	VAR_f=$err_f
-elif [ ! -f $VAR_f ]; then
-	debug && echo "error file $VAR_f not found! creating new error file.."
-	sed -i "/^VAR_f=/c\VAR_f=FALSE" $0
-	sh $0
-	exit 0;
-fi
 }
 
 function announce {
@@ -82,6 +68,8 @@ function announce {
 		quiet && exec 1>${logFile}
 		quiet && exec 2>${logFile}
 	fi
+
+return 0
 }
 
 function check_fail {
@@ -175,7 +163,6 @@ trap cleanup INT TERM EXIT
 
 
 # set error file so every 'announce' call below will call the appended scriptures just one time!
-set_error_f
 runner=0
 
 
@@ -187,13 +174,15 @@ announce "Mounting filesystems..." && \
 mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDisk}3 /mnt/SLICE-A && mount ${targetDisk}4 /mnt/SLICE-B 
 check_fail $?
 
+announce "Setting package mirror..." && \
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && sed -i '/ /s/^#//g' /etc/pacman.d/mirrorlist
+
 announce "Installing packages to first slice..." && \
 pacstrap /mnt/SLICE-A ${packages}
 check_fail $?
 
 announce "Setting package mirror..." && \
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && awk '/^## Netherlands$/ {f=1} f==0 {next} /^$/ {exit} {print substr($0, 2)}' /etc/pacman.d/mirrorlist.orig > /etc/pacman.d/mirrorlist
-check_fail $?
+arch-chroot /mnt/SLICE-A mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && arch-chroot /mnt/SLICE-A wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && arch-chroot /mnt/SLICE-A sed -i '/ /s/^#//g' /etc/pacman.d/mirrorlist
 
 announce "Setting up networking..." && \
 for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot /mnt/SLICE-A systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
@@ -208,7 +197,7 @@ echo ${targetHostname} > /mnt/SLICE-A/etc/hostname
 check_fail $?
 
 # als je dit wachtwoord leest ben je al zover gevorderd dat je 't wachtwoord van mij mag hebben :)
-announce "Setting up users" && \
+announce "Setting up users..." && \
 arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd leraar" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd beheer" && arch-chroot /mnt/SLICE-A usermod beheer -a -G wheel
 check_fail $?
 
