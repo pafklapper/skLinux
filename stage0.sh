@@ -107,11 +107,15 @@ sgdisk -Z ${targetDisk} && sync && \
 parted --script ${targetDisk} mklabel gpt mkpart ESP fat32 1MiB 200MiB mkpart primary ext4 200MiB 8% mkpart primary ext4 8% 54% mkpart primary ext4 54% 100% set 1 boot on &&  mkfs.vfat -F32 -n ESP ${targetDisk}1 && mkfs.ext4 -F -L BEHEER ${targetDisk}2 
 check_fail $?
 
+announce "Setting package mirror..." && \
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && cat /etc/pacman.d/mirrorlist | grep -i -A10 Netherlands  | sed '/ /s/^#//g' > /etc/pacman.d/mirrorlist
+check_fail $?
+
 announce "Installing base packages..." && \
 mount ${targetDisk}2 /mnt && mkdir -p /mnt/boot/efi && mount ${targetDisk}1 /mnt/boot/efi && pacstrap /mnt ${packages} 
 check_fail $?
 
-announce "Setting up mounts" && \
+announce "Setting up fstab..." && \
 genfstab -U -p /mnt > /mnt/etc/fstab
 check_fail $?
 

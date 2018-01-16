@@ -166,6 +166,10 @@ announce "Installing packages to first slice..." && \
 pacstrap /mnt/SLICE-A ${packages}
 check_fail $?
 
+announce "Setting package mirror..." && \
+cp /mnt/SLICE-A/etc/pacman.d/mirrorlist /mnt/SLICE-A/etc/pacman.d/mirrorlist.orig && cat /mnt/SLICE-A/etc/pacman.d/mirrorlist | grep -i -A10 Netherlands  | sed '/ /s/^#//g' > /mnt/SLICE-A/etc/pacman.d/mirrorlist
+check_fail $?
+
 announce "Setting up networking..." && \
 for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot systemctl enable netctl-auto@wlan0 && && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
 check_fail $?
