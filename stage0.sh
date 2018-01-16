@@ -134,7 +134,7 @@ parted --script ${targetDisk} mklabel gpt mkpart ESP fat32 1MiB 200MiB mkpart pr
 check_fail $?
 
 announce "Setting package mirror..." && \
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && awk '/^## Netherlands$/ {f=1} f==0 {next} /^$/ {exit} {print substr($0, 2)}' /etc/pacman.d/mirrorlist.orig > /etc/pacman.d/mirrorlist
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman.d/mirrorlist "https://www.archlinux.org/mirrorlist/?country=NL&protocol=https&ip_version=4&use_mirror_status=on" && sed -i '//s/^/#/g' /etc/pacman.d/mirrorlist
 check_fail $?
 
 announce "Installing base packages..." && \
