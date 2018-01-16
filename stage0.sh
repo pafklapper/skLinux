@@ -98,55 +98,6 @@ trap cleanup INT TERM EXIT
 
 # functions
 
-updateGrub()
-{
-mkdir -p /mnt/SLICE-A; mkdir -p /mnt/SLICE-B
-if [ -z "$(mount  | grep ${targetDisk}3)" ]; then mount ${targetDisk}3 /mnt/SLICE-A; fi
-if [ -z "$(mount  | grep ${targetDisk}4)" ]; then mount ${targetDisk}4 /mnt/SLICE-B; fi
-
-find /boot -name "*-fallback.img" -exec mv {} {}.disabled \;
-find /mnt/SLICE-A/boot -name "*-fallback.img" -exec mv {} {}.disabled \;
-find /mnt/SLICE-B/boot -name "*-fallback.img" -exec mv {} {}.disabled \;
-
-grub-mkconfig -o /boot/grub/grub.cfg || fatalError
-
-uuidBeheer=$(blkid -o value -s UUID ${targetDisk}2)
-uuidSliceA=$(blkid -o value -s UUID ${targetDisk}3)
-uuidSliceB=$(blkid -o value -s UUID ${targetDisk}4)
-
-
-menuStringBeheer="$(cat /boot/grub/grub.cfg | grep -e $uuidBeheer | grep -e "menuentry" )"
-menuStringSliceA="$(cat /boot/grub/grub.cfg | grep -e $uuidSliceA | grep -e "menuentry" )"
-menuStringSliceB="$(cat /boot/grub/grub.cfg | grep -e $uuidSliceB | grep -e "menuentry" )"
-
-menuNameStringBeheer="$(echo $menuStringBeheer | cut -f2 -d\')"
-menuNameStringSliceA="$(echo $menuStringSliceA | cut -f2 -d\')"
-menuNameStringSliceB="$(echo $menuStringSliceB | cut -f2 -d\')"
-
-newMenuNameStringBeheer="Beheer en Updates"
-newMenuNameStringSliceA="Installatie van $(cat /mnt/SLICE-A/install-date)"
-newMenuNameStringSliceB="Installatie van $(cat /mnt/SLICE-B/install-date)"
-
-
-newMenuStringBeheer="$(echo $menuStringBeheer | sed "s|$menuNameStringBeheer|$newMenuNameStringBeheer|g")"
-newMenuStringSliceA="$(echo $menuStringSliceA | sed "s|$menuNameStringSliceA|$newMenuNameStringSliceA|g")"
-newMenuStringSliceB="$(echo $menuStringSliceB | sed "s|$menuNameStringSliceB|$newMenuNameStringSliceB|g")"
-
-
-if [ -n "$newMenuStringBeheer" ];then
-	sed -i "s|$menuStringBeheer|$newMenuStringBeheer|g" /boot/grub/grub.cfg
-fi
-
-if [ -n "$newMenuStringSliceA" ];then
-	sed -i "s|$menuStringSliceA|$newMenuStringSliceA|g" /boot/grub/grub.cfg
-fi
-
-if [ -n "$newMenuStringSliceB" ]; then
-	sed -i "s|$menuStringSliceB|$newMenuStringSliceB|g" /boot/grub/grub.cfg
-fi
-
-}
-
 # set error file so every 'announce' call below will call the appended scriptures just one time!
 set_error_f
 runner=0
@@ -188,27 +139,9 @@ announce "Setting root shell.." && \
 arch-chroot /mnt chsh -s /usr/bin/zsh 
 check_fail $?
 
-announce "Setting ready install scripts for next boot..." && \
+announce "Preparing install scripts for next boot..." && \
 sleep 2
 check_fail $?
 
-
 # reboot / warning / telegram hier
 exit 0
-
-
-mkdir -p /mnt/SLICE-A; mkdir -p /mnt/SLICE-B
-mkfs.ext4 -F -L SLICE-A /dev/sda3 && mkfs.ext4 -F -L SLICE-B /dev/sda4 && mount /dev/sda3 /mnt/SLICE-A && mount /dev/sda4 /mnt/SLICE-B && pacstrap /mnt/SLICE-A base && pacstrap /mnt/SLICE-B base && sync && umount  /mnt/SLICE-A &&  umount /mnt/SLICE-B && updateGrub && poweroff
-
-
-
-pacstrap /mnt gnome firefox remmina chromium libreoffice-fresh-nl
-
-pacstrap /mnt base-devel fakeroot jshon expac git wget
-
-arch-chroot /mnt bash -c "useradd builder;echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers; usermod builder -a -G wheel"
-
-arch-chroot /mnt bash -c "cd /tmp; sudo -u builder wget https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=packer; mv PKGBUILD\?h\=packer PKGBUILD; sudo -u builder makepkg; pacman -U packer-*.pkg.tar.xz --noconfirm"
-
-arch-chroot /mnt sudo -u builder packer -S --noconfirm ssvnc python2-pycha-hg bsdmainutils epoptes-bzr epoptes-client-bzr
-
