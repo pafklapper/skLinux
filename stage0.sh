@@ -12,7 +12,7 @@ DEBUG="false"
 targetRootPw="1234"
 targetHostname="skLinuxClient"
 targetDisk="$1"
-packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git"
+packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
 
 # variables initialisation
 # do not change this line! 
@@ -139,8 +139,12 @@ announce "Setting root shell.." && \
 arch-chroot /mnt chsh -s /usr/bin/zsh 
 check_fail $?
 
-announce "Preparing install scripts for next boot..." && \
-sleep 2
+announce "Preparing runner scripts for next boot..." && \
+cp /srv/skLinux/skLinux.service /mnt/etc/systemd/system/ && arch-chroot /mnt systemctl enable skLinux.service
+check_fail $?
+
+announce "Copying service files over..." && \
+cp -a /srv/skLinux /mnt/srv/
 check_fail $?
 
 # reboot / warning / telegram hier

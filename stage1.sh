@@ -180,7 +180,7 @@ check_fail $?
 
 # als je dit wachtwoord leest ben je al zover gevorderd dat je 't wachtwoord van mij mag hebben :)
 announce "Setting up users" && \
-arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && echo "r3pelsteeltje\nr3pelsteeltje" | passwd leraar && echo "r3pelsteeltje\nr3pelsteeltje" | passwd beheer
+arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd leraar" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd beheer" && usermod beheer -a -G wheel
 check_fail $?
 
 announce "Setting root password..." && \
@@ -219,6 +219,11 @@ check_fail $?
 announce "Setting installation date" && \
 echo "$(date '+%F')" > /mnt/SLICE-A/install-date && echo "$(date '+%F') (backup)" > /mnt/SLICE-B/install-date
 check_fail $?
+
+announce "Copying service files over..." && \
+cp -a /srv/skLinux /mnt/SLICE-A/srv/
+check_fail $?
+
 
 announce "Copying over initial configuration from slice A to slice B..." && \
 rsync -aAxXv --progress -W /mnt/SLICE-A/* /mnt/SLICE-B
