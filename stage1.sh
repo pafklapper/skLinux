@@ -159,7 +159,7 @@ mkfs.ext4 -F -L SLICE-A ${targetDisk}3 && mkfs.ext4 -F -L SLICE-B ${targetDisk}4
 check_fail $?
 
 announce "Mounting filesystems..." && \
-mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDevice}3 /mnt/SLICE-A && mount ${targetDevice}4 /mnt/SLICE-B 
+mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDisk}3 /mnt/SLICE-A && mount ${targetDisk}4 /mnt/SLICE-B 
 check_fail $?
 
 announce "Installing packages to first slice..." && \
