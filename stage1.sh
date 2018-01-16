@@ -8,7 +8,7 @@ fi
 
 # constants initialisation
 DEBUG="false"
-
+logFile=/var/log/skLinux
 
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
@@ -60,10 +60,16 @@ function announce {
 		SKIP=
                 sed -i '/^SKIP=/d' $VAR_f
 		>&2 echo -n "$1"
+		#temporarily disable stdout
+		exec 4<&1
+		exec 1>${logFile}
 	fi
 }
 
 function check_fail {
+	# reenable stdout
+	exec 1<&4
+
 	if [[ $1 -ne 0 ]]; then
 		eval `envsubst < $VAR_f`
 		if [ -n "$SKIP" ]; then
@@ -77,7 +83,7 @@ function check_fail {
 			exit 1
 		fi
 	else
-		>&2 echo "OK!"
+		>&2 echo -e "\e[32m\e[1mOK\e[0m"
 		if [ -z "$(grep -e '^finished=' $VAR_f )"  ]; then
                 	echo "finished=$runner" >> $VAR_f
 		else
@@ -171,7 +177,7 @@ cp /mnt/SLICE-A/etc/pacman.d/mirrorlist /mnt/SLICE-A/etc/pacman.d/mirrorlist.ori
 check_fail $?
 
 announce "Setting up networking..." && \
-for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
+for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot /mnt/SLICE-A systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
 check_fail $?
 
 announce "Setting legacy network card naming..." && \
@@ -179,20 +185,20 @@ ln -sf /dev/null /mnt/SLICE-A/etc/udev/rules.d/80-net-setup-link.rules
 check_fail $?
 
 announce "Setting hostname..." && \
-echo ${targetHostname} > /mnt/etc/hostname
+echo ${targetHostname} > /mnt/SLICE-A/etc/hostname
 check_fail $?
 
 # als je dit wachtwoord leest ben je al zover gevorderd dat je 't wachtwoord van mij mag hebben :)
 announce "Setting up users" && \
-arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd leraar" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd beheer" && usermod beheer -a -G wheel
+arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd leraar" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd beheer" && arch-chroot /mnt/SLICE-A usermod beheer -a -G wheel
 check_fail $?
 
 announce "Setting root password..." && \
-arch-chroot /mnt sh -c "echo -e \"${targetRootPw}\n${targetRootPw}\" |  passwd root"
+arch-chroot /mnt/SLICE-A sh -c "echo -e \"${targetRootPw}\n${targetRootPw}\" |  passwd root"
 check_fail $?
 
 announce "Setting root shell.." && \
-arch-chroot /mnt chsh -s /usr/bin/zsh 
+arch-chroot /mnt/SLICE-A chsh -s /usr/bin/zsh 
 check_fail $?
 
 #announce "Enabling services..." && \
@@ -204,33 +210,23 @@ arch-chroot /mnt/SLICE-A echo "nl_NL.UTF-8 UTF-8" > /etc/locale.gen && locale-ge
 check_fail $?
 
 announce "Setting timezone..." && \
-arch-chroot /mnt/SLICE-A timedatectl set-timezone Europe/Amsterdam
+rm -f /mnt/SLICE-a/etc/localtime; arch-chroot /mnt/SLICE-A ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 check_fail $?
 
 announce "Preparing runner scripts for next boot..." && \
 cp /srv/skLinux/skLinux.service /mnt/SLICE-A/etc/systemd/system/ && arch-chroot /mnt/SLICE-A systemctl enable skLinux.service
 check_fail $?
 
-announce "" && \
-check_fail $?
-
-announce "" && \
-check_fail $?
-
-announce "" && \
-check_fail $?
-
-announce "Setting installation date" && \
-echo "$(date '+%F')" > /mnt/SLICE-A/install-date && echo "$(date '+%F') (backup)" > /mnt/SLICE-B/install-date
-check_fail $?
-
 announce "Copying service files over..." && \
 cp -a /srv/skLinux /mnt/SLICE-A/srv/
 check_fail $?
 
-
 announce "Copying over initial configuration from slice A to slice B..." && \
 rsync -aAxXv --progress -W /mnt/SLICE-A/* /mnt/SLICE-B
+check_fail $?
+
+announce "Setting installation date" && \
+echo "$(date '+%F')" > /mnt/SLICE-A/install-date && echo "$(date '+%F') (backup)" > /mnt/SLICE-B/install-date
 check_fail $?
 
 announce "Setting up fstab..." && \
