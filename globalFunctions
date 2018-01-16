@@ -1,0 +1,77 @@
+logp()
+{
+case "$1" in
+	info)
+		echo -e "\e[32m\e[1m* \e[0m$2"
+	;;
+	warning)
+		echo -e "\033[31m\e[1m* \e[0m$2"
+	echo 
+	;;
+	fatal)
+		echo -e "\e[31m\e[1m* \e[0m\e[30m\e[101m$2"
+		echo -e "\e[31m\e[1m* \e[0m\e[30m\e[101mDruk een toets om opnieuw op te starten...\e[0m"
+
+		cat $logFile | $installationDirectory/externalModules/aha/aha --black > $logHtmlFile
+		read </dev/tty && reboot
+	;;
+	beginsection)
+		echo -e "\e[33m**********************************************"
+		echo -e "\e[33m||||||||||||||||||||||||||||||||||||||||||||||"
+	;;
+	endsection)
+		echo -e "\e[33m||||||||||||||||||||||||||||||||||||||||||||||"
+		echo -e "\e[33m**********************************************"
+	;;
+	notify)
+		# as ripped from: https://www.forsomedefinition.com/automation/creating-telegram-bot-notifications/
+		if [ -n "$TELEGRAMCHATID" ] && [ -n "$TELEGRAMTOKEN" ]; then
+			local curlTimeOut="10"
+			local URL="https://api.telegram.org/bot$TELEGRAMTOKEN/sendMessage"
+			local TEXT="$2"
+	
+			curl -s --max-time $curlTimeOut -d "chat_id=$TELEGRAMCHATID&disable_web_page_preview=1&text=$TEXT" $URL >/dev/null
+		fi
+	;;
+esac
+cat $logFile | $installationDirectory/externalModules/aha/aha --black > $logHtmlFile
+}
+
+
+waitForNetwork()
+{
+while :;
+do
+	timeout 5 curl -sff google.nl -o /dev/null 2>/dev/null
+	if [ $? -eq 0 ]; then
+		logp info "Het netwerk is toegankelijk!"
+		return 0
+	fi
+
+	sleep 1 
+done
+}
+
+isHostUp()
+{
+if [ -z "$1" ]; then echo isHostUp requires host as argument!; read; fi
+if timeout 5 curl -sSf $1 > /dev/null; then
+	return 0
+else
+	return 1
+fi
+}
+
+isGitRepoUptodate()
+{
+git fetch
+
+if git diff origin/master --quiet HEAD --; then
+	logp info "Installatie up-to-date."
+	return 0
+else
+	logp warning "Installatie veroudert..."
+	return 1
+fi
+}
+

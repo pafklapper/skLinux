@@ -1,17 +1,22 @@
 #!/bin/bash
 
-# sanity checks
-if [ -z "$1" ] || ! [ -b "$1" ]; then
-	echo "ARG not a blockdevice!"
-	exit 0
-fi
+# bash run options
+set -o pipefail
+
+initVars()
+{
+installationDirectory="$(dirname $(realpath "$0"))"
+. $installationDirectory/globalVariables
+. $installationDirectory/globalFunctions
+logFile=/var/log/skLinux.log
+}
+
+initVars
 
 # constants initialisation
 DEBUG="false"
-
 targetRootPw="1234"
 targetHostname="skLinuxClient"
-targetDisk="$1"
 packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
 
 # variables initialisation

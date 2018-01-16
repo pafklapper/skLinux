@@ -1,10 +1,17 @@
 #!/bin/sh
 
-# sanity checks
-if [ -z "$1" ] || ! [ -b "$1" ]; then
-	echo "ARG not a blockdevice!"
-	exit 0
-fi
+# bash run options
+set -o pipefail
+
+initVars()
+{
+installationDirectory="$(dirname $(realpath "$0"))"
+. $installationDirectory/globalVariables
+. $installationDirectory/globalFunctions
+logFile=/var/log/skLinux.log
+}
+
+initVars
 
 # constants initialisation
 DEBUG="false"
@@ -13,8 +20,7 @@ logFile=/var/log/skLinux
 
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
-targetDisk="$1"
-packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
+packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync gdm gnome xorg"
 
 # variables initialisation
 # do not change this line! 
@@ -248,6 +254,10 @@ check_fail $?
 
 announce "Updating bootloader..." && \
 updateGrub
+check_fail $?
+
+announce "Set option to boot from first slice on reboot..."
+grub-reboot 2
 check_fail $?
 
 exit 0

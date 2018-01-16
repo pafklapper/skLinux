@@ -5,7 +5,7 @@ Conflicts=getty@tty1.service
 
 [Service]
 #Type=oneshot
-ExecStart=/srv/skLinux/main.sh
+ExecStart=/usr/bin/sh /srv/skLinux/main.sh
 StandardInput=tty
 TTYPath=/dev/tty1
 TTYReset=yes
