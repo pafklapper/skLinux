@@ -10,7 +10,7 @@ fi
 DEBUG="false"
 
 
-targetRootPw="1234"
+targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
 targetDisk="$1"
 packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
@@ -233,9 +233,11 @@ announce "Setting up fstab..." && \
 genfstab -U -p /mnt/SLICE-A > /mnt/SLICE-A/etc/fstab && genfstab -U -p /mnt/SLICE-B > /mnt/SLICE-B/etc/fstab
 check_fail $?
 
+announce "Updating bootloader..." && \
+updateGrub
+check_fail $?
 
-# genfstab, date, useres
-
+exit 0
 
 
 
