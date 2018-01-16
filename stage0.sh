@@ -16,7 +16,7 @@ initVars
 # constants initialisation
 DEBUG="false"
 QUIET="true"
-targetRootPw="1234"
+targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
 packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
 
@@ -132,7 +132,14 @@ genfstab -U -p /mnt > /mnt/etc/fstab
 check_fail $?
 
 announce "Setting up bootloader (GRUB)..." && \
-arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --recheck --removable && arch-chroot /mnt sed -i '/^GRUB_TERMINAL/c\GRUB_TERMINAL=console' /etc/default/grub && arch-chroot /mnt sed -i '/^GRUB_TIMEOUT=/c\GRUB_TIMEOUT=15' /etc/default/grub && arch-chroot /mnt sed -i '/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved' /etc/default/grub && arch-chroot /mnt sed -i '/^GRUB_DISABLE_SUBMENU=/c\GRUB_DISABLE_SUBMENU=y' /etc/default/grub && arch-chroot /mnt sed -i '/^GRUB_HIDDEN_TIMEOUT=/c\GRUB_HIDDEN_TIMEOUT=5' /etc/default/grub && arch-chroot /mnt sed -i '/^GRUB_SAVEDEFAULT=/c\GRUB_SAVEDEFAULT=\"true\"' /etc/default/grub && arch-chroot /mnt echo "## Uncomment to disable submenu\nGRUB_DISABLE_SUBMENU=y" >> /etc/default/grub && arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --recheck --removable && \
+arch-chroot /mnt sed -i '/^GRUB_TERMINAL/c\GRUB_TERMINAL=console' /etc/default/grub && \
+arch-chroot /mnt sed -i '/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved' /etc/default/grub && \
+arch-chroot /mnt sed -i '/^GRUB_HIDDEN_TIMEOUT=/c\GRUB_HIDDEN_TIMEOUT=5' /etc/default/grub && \
+arch-chroot /mnt sed -i '/^GRUB_SAVEDEFAULT=/c\GRUB_SAVEDEFAULT=\"true\"' /etc/default/grub && \
+arch-chroot /mnt sed -i '/^GRUB_DISABLE_SUBMENU=/c\GRUB_DISABLE_SUBMENU=y' /etc/default/grub && \
+arch-chroot /mnt echo "## Uncomment to disable submenu\nGRUB_DISABLE_SUBMENU=y" >> /etc/default/grub && \
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 check_fail $?
 
 announce "Setting legacy network card naming..." && \

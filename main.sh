@@ -42,8 +42,11 @@ fi
 
 # check if this is an install env
 
+
 if [ "$mountEnv" = "be" ]; then
+	# dit is beheer
 	if [ -z "$(lsblk -f | grep SLICE-A)" ] || [ -z "$(lsblk -f | grep SLICE-B)" ]; then
+		# er is zijn nog geen slices aangemaakt
 		logp info "Installatie zal worden voorgezet!..."
 		if sh /srv/skLinux/stage1.sh; then
 			logp info "Installatie succesvol!"
@@ -53,8 +56,8 @@ if [ "$mountEnv" = "be" ]; then
 			logp fatal "Installatie mislukt! Zou je dit aan Annemieke of Stan willen doorgeven? Graag met een foto/beschrijving van de foutmelding erbij"
 		fi
 	else
-		logp info "installatie al voltrokken ?? NIET AF"
-		#installatie al voltrokken
+		# er zijn al slices aangemaakt
+		logp info "installatie al voltrokken "
 		# checken voor fouten?
 	fi
 elif [ -n "$mountEnv" ]; then
