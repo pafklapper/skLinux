@@ -8,6 +8,7 @@ fi
 
 # constants initialisation
 DEBUG="false"
+QUIET="true"
 logFile=/var/log/skLinux
 
 targetRootPw="r3pelsteeltje"
@@ -22,7 +23,15 @@ VAR_f=/tmp/./install.sh.vZn
 # meta functions
 
 function debug {
-	if [ "$DEBUG" = "TRUE" ]; then
+	if [ "$DEBUG" = "true" ]; then
+		return 0
+	else
+		return 1;
+	fi
+}
+
+function quiet {
+	if [ "$QUIET" = "true" ]; then
 		return 0
 	else
 		return 1;
