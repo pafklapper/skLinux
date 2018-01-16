@@ -12,7 +12,6 @@ case "$1" in
 		echo -e "\e[31m\e[1m* \e[0m\e[30m\e[101m$2"
 		echo -e "\e[31m\e[1m* \e[0m\e[30m\e[101mDruk een toets om opnieuw op te starten...\e[0m"
 
-		cat $logFile | $installationDirectory/externalModules/aha/aha --black > $logHtmlFile
 		read </dev/tty && reboot
 	;;
 	beginsection)
@@ -34,7 +33,6 @@ case "$1" in
 		fi
 	;;
 esac
-cat $logFile | $installationDirectory/externalModules/aha/aha --black > $logHtmlFile
 }
 
 

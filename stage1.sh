@@ -192,7 +192,7 @@ pacstrap /mnt/SLICE-A ${packages}
 check_fail $?
 
 announce "Setting package mirror..." && \
-cp /mnt/SLICE-A/etc/pacman.d/mirrorlist /mnt/SLICE-A/etc/pacman.d/mirrorlist.orig && cat /mnt/SLICE-A/etc/pacman.d/mirrorlist | grep -i -A10 Netherlands  | sed '/ /s/^#//g' > /mnt/SLICE-A/etc/pacman.d/mirrorlist
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && cat /etc/pacman.d/mirrorlist.orig | awk '/^## Netherlands$/ {f=1} f==0 {next} /^$/ {exit} {print substr($0, 2)}' /etc/pacman.d/mirrorlist.orig > /etc/pacman.d/mirrorlist
 check_fail $?
 
 announce "Setting up networking..." && \

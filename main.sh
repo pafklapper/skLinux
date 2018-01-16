@@ -22,17 +22,15 @@ cd $installationDirectory
 mountEnv=""
 
 # check which platform 
-if [ -n "$(mount | grep "${targetDisk}2 on / type" )"]; then
+if [ -n "$(mount | grep "${targetDisk}2 on / type" )" ]; then
 	# dit is de beheer partitie
 	mountEnv="be"
-elif [ -n "$(mount | grep "${targetDisk}3 on / type")"; ];then
+elif [ -n "$(mount | grep "${targetDisk}3 on / type")" ];then
 	# dit is SLICE A
 	mountEnv="A"
-elif [ -n "$(mount | grep "${targetDisk}4 on / type")"; ];then
+elif [ -n "$(mount | grep "${targetDisk}4 on / type")" ];then
 	# dit is SLICE B
 	mountEnv="B"
-else
-	logp fatal FATALE FOUT: root partitie kon niet gevonden worden!
 fi
 
 # update
@@ -62,7 +60,7 @@ if [ "$mountEnv" = "be" ]; then
 elif [ -n "$mountEnv" ]; then
 	logp info "Installatie zal in gang worden gezet!"
 
-elif [ "$mountEnv" = "A" ] || [ "$mountEnv" "B" ]; then
+elif [ "$mountEnv" = "A" ] || [ "$mountEnv" = "B" ]; then
 	# checken voor desktop files update?
 	logp info "dit is Slice $A : checken voor updates? NIET AF"
 
