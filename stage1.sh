@@ -60,15 +60,19 @@ function announce {
 		SKIP=
                 sed -i '/^SKIP=/d' $VAR_f
 		>&2 echo -n "$1"
+	
 		#temporarily disable stdout
-		exec 4<&1
-		exec 1>${logFile}
+		quiet && exec 4<&1
+		quiet && exec 5<&2
+		quiet && exec 1>${logFile}
+		quiet && exec 2>${logFile}
 	fi
 }
 
 function check_fail {
 	# reenable stdout
-	exec 1<&4
+	quiet && exec 1<&4
+	quiet && exec 2<&5
 
 	if [[ $1 -ne 0 ]]; then
 		eval `envsubst < $VAR_f`
@@ -210,7 +214,7 @@ arch-chroot /mnt/SLICE-A echo "nl_NL.UTF-8 UTF-8" > /etc/locale.gen && locale-ge
 check_fail $?
 
 announce "Setting timezone..." && \
-rm -f /mnt/SLICE-a/etc/localtime; arch-chroot /mnt/SLICE-A ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+rm -f /mnt/SLICE-A/etc/localtime; arch-chroot /mnt/SLICE-A ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 check_fail $?
 
 announce "Preparing runner scripts for next boot..." && \
