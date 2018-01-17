@@ -116,7 +116,7 @@ runner=0
 
 announce "Setting up harddisk..." && \
 sgdisk -Z ${targetDisk} && sync && \
-parted --script ${targetDisk} mklabel gpt mkpart ESP fat32 1MiB 200MiB mkpart primary ext4 200MiB 8% mkpart primary ext4 8% 54% mkpart primary ext4 54% 100% set 1 boot on &&  mkfs.vfat -F32 -n ESP ${targetDisk}1 && mkfs.ext4 -F -L BEHEER ${targetDisk}2 
+parted --script ${targetDisk} mklabel gpt mkpart ESP fat32 1MiB 200MiB mkpart primary ext4 200MiB 8% mkpart primary ext4 8% 54% mkpart primary ext4 54% 100% set 1 boot on &&  mkfs.vfat -F32 -n ESP ${targetDisk}${partPrefix}1 && mkfs.ext4 -F -L BEHEER ${targetDisk}${partPrefix}2 
 check_fail $?
 
 announce "Setting package mirror..." && \
