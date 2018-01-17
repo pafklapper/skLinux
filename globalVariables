@@ -1,2 +1,2 @@
 targetDisk=/dev/mmcblk1
-partPreFix=p
+partPrefix=p
