@@ -20,7 +20,7 @@ logFile=/var/log/skLinux
 
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
-packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync gdm gnome xorg"
+packages="base  vim net-tools wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync gdm gnome xorg acpi acpid"
 
 # variables initialisation
 # do not change this line! 
@@ -211,9 +211,9 @@ announce "Setting root shell.." && \
 arch-chroot /mnt/SLICE-A chsh -s /usr/bin/zsh 
 check_fail $?
 
-#announce "Enabling services..." && \
-#arch-chroot /mnt/SLICE-A systemctl enable gdm.service
-#check_fail $?
+announce "Setting services..." && \
+arch-chroot /mnt systemctl enable acpid
+check_fail $?
 
 announce "Setting languages..." && \
 arch-chroot /mnt/SLICE-A echo "nl_NL.UTF-8 UTF-8" > /etc/locale.gen && locale-gen

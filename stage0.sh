@@ -18,7 +18,7 @@ DEBUG="false"
 QUIET="false"
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
-packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
+packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync acpi acpid"
 
 # variables initialisation
 # do not change this line! 
@@ -152,6 +152,10 @@ check_fail $?
 
 announce "Setting hostname..." && \
 echo ${targetHostname} > /mnt/etc/hostname 
+check_fail $?
+
+announce "Setting services..." && \
+arch-chroot /mnt systemctl enable acpid
 check_fail $?
 
 announce "Setting root password..." && \ 
