@@ -15,7 +15,7 @@ initVars
 
 # constants initialisation
 DEBUG="false"
-QUIET="true"
+QUIET="false"
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
 packages="base grub os-prober vim net-tools arch-install-scripts wget curl dialog wpa_supplicant wpa_actiond grml-zsh-config openssh git rsync"
