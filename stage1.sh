@@ -187,7 +187,7 @@ arch-chroot /mnt/SLICE-A mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.or
 check_fail $?
 
 announce "Setting up networking..." && \
-for i in networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot /mnt/SLICE-A systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
+for i in $installationDirectory/networks/*; do cp $i /mnt/SLICE-A/etc/netctl; done && arch-chroot /mnt/SLICE-A systemctl enable netctl-auto@wlan0 && arch-chroot /mnt/SLICE-A systemctl enable systemd-resolved 
 check_fail $?
 
 announce "Setting legacy network card naming..." && \

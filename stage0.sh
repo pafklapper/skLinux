@@ -147,7 +147,7 @@ ln -sf /dev/null /mnt/etc/udev/rules.d/80-net-setup-link.rules
 check_fail $?
 
 announce "Setting up networking..."  && \
-arch-chroot /mnt systemctl enable dhcpcd@eth0 && systemctl enable netctl-auto@wlan0 && arch-chroot /mnt systemctl enable systemd-resolved 
+arch-chroot /mnt systemctl enable dhcpcd@eth0 && systemctl enable netctl-auto@wlan0 && arch-chroot /mnt systemctl enable systemd-resolved && cp $installationDirectory/networks/* /etc/netctl/
 check_fail $?
 
 announce "Setting hostname..." && \
