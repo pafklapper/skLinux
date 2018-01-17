@@ -80,4 +80,6 @@ else
 		logp fatal "Installatie helaas mislukt! :("
 	fi
 fi
+
+}
 main $@
