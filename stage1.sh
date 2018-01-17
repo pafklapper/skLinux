@@ -212,7 +212,7 @@ arch-chroot /mnt/SLICE-A chsh -s /usr/bin/zsh
 check_fail $?
 
 announce "Setting services..." && \
-arch-chroot /mnt systemctl enable acpid
+arch-chroot /mnt/SLICE-A systemctl enable acpid
 check_fail $?
 
 announce "Setting languages..." && \
