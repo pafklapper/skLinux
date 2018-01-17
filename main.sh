@@ -56,6 +56,7 @@ if [ "$mountEnv" = "be" ]; then
 	else
 		if [ -f /skLinuxGoooo ]; then
 			logp info "Installatie zal worden hervat!"
+			logp middlesection
 			if cat /dev/null > /srv/skLinux/stage1.runnerFile && sh $installationDirectory/stage1.sh; then
 				rm -f /skLinuxGoooo
 				logp endsection

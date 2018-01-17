@@ -132,7 +132,7 @@ genfstab -U -p /mnt > /mnt/etc/fstab
 check_fail $?
 
 announce "Setting up bootloader (GRUB)..." && \
-arch-chroot /mnt grub-install --target=i686-efi --efi-directory=/boot/efi --recheck --removable && \
+arch-chroot /mnt grub-install --target=i386-efi --efi-directory=/boot/efi --recheck --removable && \
 arch-chroot /mnt sed -i '/GRUB_TERMINAL/c\GRUB_TERMINAL=console' /etc/default/grub && \
 arch-chroot /mnt sed -i '/GRUB_DEFAULT=/c\GRUB_DEFAULT=saved' /etc/default/grub && \
 arch-chroot /mnt sed -i '/GRUB_HIDDEN_TIMEOUT=/c\GRUB_HIDDEN_TIMEOUT=5' /etc/default/grub && \
