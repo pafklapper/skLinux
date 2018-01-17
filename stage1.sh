@@ -251,6 +251,10 @@ announce "Set option to boot from first slice on reboot..."
 grub-reboot 1
 check_fail $?
 
+announce "Resetting initial install flag..."
+rm -f /skLinuxGoooo
+check_fail $?
+
 exit 0
 
 
