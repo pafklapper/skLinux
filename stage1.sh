@@ -15,7 +15,7 @@ initVars
 
 # constants initialisation
 DEBUG="false"
-QUIET="true"
+QUIET="false"
 logFile=/var/log/skLinux
 
 targetRootPw="r3pelsteeltje"
