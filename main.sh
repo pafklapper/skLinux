@@ -50,6 +50,7 @@ fi
 if [ "$mountEnv" = "be" ]; then
 	logp info "BEHEER omgeving geladen.."
 
+	mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B
 	if mount ${targetDisk}3 /mnt/SLICE-A && [ -f /mnt/SLICE-A/install-date ] && mount ${targetDisk}4 /mnt/SLICE-B && [ -f /mnt/SLICE-B/install-date ]; then
 		logp info "SLICES succesvol gemount.."
 	else
