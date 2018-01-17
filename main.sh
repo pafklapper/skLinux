@@ -73,7 +73,7 @@ elif [ "$mountEnv" = "B" ]; then
 else
 	logp info "USBINSTALL omgeving geladen.."
 	logp info "Installatie zal worden gestart.."
-	if cat /dev/null > /srv/skLinux/stage0.runner && sh $installationDirectory/stage0.sh; then
+	if cat /dev/null > /srv/skLinux/stage0.runnerFile && sh $installationDirectory/stage0.sh; then
 		logp endsection
 		logp info "Installatie succesvol! Druk op een knop om de computer opnieuw op te starten en verder te gaan met de installatie!"
 		read; reboot
