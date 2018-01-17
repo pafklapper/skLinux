@@ -161,9 +161,6 @@ umount /mnt 2>/dev/null
 }
 trap cleanup INT TERM EXIT
 
-updateGrub
-exit 1
-
 
 # set error file so every 'announce' call below will call the appended scriptures just one time!
 runner=0
