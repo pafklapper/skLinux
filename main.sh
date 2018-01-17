@@ -54,6 +54,7 @@ if [ "$mountEnv" = "be" ]; then
 	if mount ${targetDisk}${partPrefix}3 /mnt/SLICE-A && [ -f /mnt/SLICE-A/install-date ] && mount ${targetDisk}${partPrefix}4 /mnt/SLICE-B && [ -f /mnt/SLICE-B/install-date ]; then
 		logp info "SLICES succesvol gemount.."
 	else
+		umount /mnt/SLICE-A 2>/dev/null; umount /mnt/SLICE-B 2>/dev/null
 		if [ -f /skLinuxGoooo ]; then
 			logp info "Installatie zal worden hervat!"
 			logp middlesection
@@ -61,7 +62,7 @@ if [ "$mountEnv" = "be" ]; then
 				rm -f /skLinuxGoooo
 				logp endsection
 				logp info "Installatie succesvol! De computer is nu klaar voor gebruik en zal over vijf seconde vanzelf opnieuw opstarten!"
-				sleep 5 reboot
+				read; reboot
 			else
 				logp fatal "Installatie helaas mislukt! :("
 			fi
