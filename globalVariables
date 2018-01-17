@@ -1,1 +1,2 @@
-targetDisk=/dev/sda
+targetDisk=/dev/mmcblk1
+partPreFix=p

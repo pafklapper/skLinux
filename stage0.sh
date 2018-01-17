@@ -124,7 +124,7 @@ mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig && wget -O /etc/pacman
 check_fail $?
 
 announce "Installing base packages..." && \
-mount ${targetDisk}2 /mnt && mkdir -p /mnt/boot/efi && mount ${targetDisk}1 /mnt/boot/efi && pacstrap /mnt ${packages} 
+mount ${targetDisk}${partPrefix}2 /mnt && mkdir -p /mnt/boot/efi && mount ${targetDisk}${partPrefix}1 /mnt/boot/efi && pacstrap /mnt ${packages} 
 check_fail $?
 
 announce "Setting up fstab..." && \

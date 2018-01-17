@@ -108,8 +108,8 @@ fatalError() {
 updateGrub()
 {
 mkdir -p /mnt/SLICE-A; mkdir -p /mnt/SLICE-B
-if [ -z "$(mount  | grep ${targetDisk}3)" ]; then mount ${targetDisk}3 /mnt/SLICE-A; fi
-if [ -z "$(mount  | grep ${targetDisk}4)" ]; then mount ${targetDisk}4 /mnt/SLICE-B; fi
+if [ -z "$(mount  | grep ${targetDisk}${partPrefix}3)" ]; then mount ${targetDisk}${partPrefix}3 /mnt/SLICE-A; fi
+if [ -z "$(mount  | grep ${targetDisk}${partPrefix}4)" ]; then mount ${targetDisk}${partPrefix}4 /mnt/SLICE-B; fi
 
 find /boot -name "*-fallback.img" -exec mv {} {}.disabled \;
 find /mnt/SLICE-A/boot -name "*-fallback.img" -exec mv {} {}.disabled \;
@@ -117,9 +117,9 @@ find /mnt/SLICE-B/boot -name "*-fallback.img" -exec mv {} {}.disabled \;
 
 grub-mkconfig -o /boot/grub/grub.cfg || fatalError
 
-uuidBeheer=$(blkid -o value -s UUID ${targetDisk}2)
-uuidSliceA=$(blkid -o value -s UUID ${targetDisk}3)
-uuidSliceB=$(blkid -o value -s UUID ${targetDisk}4)
+uuidBeheer=$(blkid -o value -s UUID ${targetDisk}${partPrefix}2)
+uuidSliceA=$(blkid -o value -s UUID ${targetDisk}${partPrefix}3)
+uuidSliceB=$(blkid -o value -s UUID ${targetDisk}${partPrefix}4)
 
 
 menuStringBeheer="$(cat /boot/grub/grub.cfg | grep -e $uuidBeheer | grep -e "menuentry" )"
@@ -167,11 +167,11 @@ runner=0
 
 
 announce "Setting up filesystems..." && \
-mkfs.ext4 -F -L SLICE-A ${targetDisk}3 && mkfs.ext4 -F -L SLICE-B ${targetDisk}4
+mkfs.ext4 -F -L SLICE-A ${targetDisk}${partPrefix}3 && mkfs.ext4 -F -L SLICE-B ${targetDisk}${partPrefix}4
 check_fail $?
 
 announce "Mounting filesystems..." && \
-mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDisk}3 /mnt/SLICE-A && mount ${targetDisk}4 /mnt/SLICE-B 
+mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B && mount ${targetDisk}${partPrefix}3 /mnt/SLICE-A && mount ${targetDisk}${partPrefix}4 /mnt/SLICE-B 
 check_fail $?
 
 announce "Setting package mirror for BEHEER..." && \

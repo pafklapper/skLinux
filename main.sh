@@ -22,15 +22,15 @@ logp info  "wachten op de netwerkverbinding... " && waitForNetwork
 
 mountEnv=""
 # check which platform 
-if [ -n "$(mount | grep "${targetDisk}2 on / type" )" ]; then
+if [ -n "$(mount | grep "${targetDisk}${partPrefix}2 on / type" )" ]; then
 	# dit is de beheer partitie
 	mountEnv="be"
-elif [ -n "$(mount | grep "${targetDisk}3 on / type")" ];then
+elif [ -n "$(mount | grep "${targetDisk}${partPrefix}3 on / type")" ];then
 	# dit is SLICE A
 	if [ -f /install-date ]; then
 		mountEnv="A"
 	fi
-elif [ -n "$(mount | grep "${targetDisk}4 on / type")" ];then
+elif [ -n "$(mount | grep "${targetDisk}${partPrefix}4 on / type")" ];then
 	# dit is SLICE B
 	if [ -f /install-date ]; then
 		mountEnv="B"
@@ -51,7 +51,7 @@ if [ "$mountEnv" = "be" ]; then
 	logp info "BEHEER omgeving geladen.."
 
 	mkdir -p /mnt/SLICE-A && mkdir -p /mnt/SLICE-B
-	if mount ${targetDisk}3 /mnt/SLICE-A && [ -f /mnt/SLICE-A/install-date ] && mount ${targetDisk}4 /mnt/SLICE-B && [ -f /mnt/SLICE-B/install-date ]; then
+	if mount ${targetDisk}${partPrefix}3 /mnt/SLICE-A && [ -f /mnt/SLICE-A/install-date ] && mount ${targetDisk}${partPrefix}4 /mnt/SLICE-B && [ -f /mnt/SLICE-B/install-date ]; then
 		logp info "SLICES succesvol gemount.."
 	else
 		if [ -f /skLinuxGoooo ]; then
