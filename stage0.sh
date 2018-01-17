@@ -14,7 +14,7 @@ logFile=/var/log/skLinux.log
 initVars
 
 # constants initialisation
-DEBUG="false"
+DEBUG="true"
 QUIET="false"
 targetRootPw="r3pelsteeltje"
 targetHostname="skLinuxClient"
