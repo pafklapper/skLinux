@@ -248,7 +248,7 @@ updateGrub
 check_fail $?
 
 announce "Set option to boot from first slice on reboot..."
-grub-reboot 2
+grub-reboot 1
 check_fail $?
 
 exit 0

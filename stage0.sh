@@ -170,5 +170,9 @@ announce "Copying service files over..." && \
 cp -a /srv/skLinux /mnt/srv/
 check_fail $?
 
+announce "Marking BEHEER for first install..." && \
+arch-chroot /mnt touch /skLinuxGoooo
+check_fail $?
+
 # reboot / warning / telegram hier
 exit 0
