@@ -55,13 +55,14 @@ if [ "$mountEnv" = "be" ]; then
 	else
 		if [ -f /skLinuxGoooo ]; then
 			logp info "Installatie zal worden hervat!"
-		if cat /dev/null > /srv/skLinux/stage1.runner && sh $installationDirectory/stage1.sh; then
-			rm -f /skLinuxGoooo
-			logp endsection
-			logp info "Installatie succesvol! De computer is nu klaar voor gebruik en zal over vijf seconde vanzelf opnieuw opstarten!"
-			sleep 5 reboot
-		else
-			logp fatal "Installatie helaas mislukt! :("
+			if cat /dev/null > /srv/skLinux/stage1.runner && sh $installationDirectory/stage1.sh; then
+				rm -f /skLinuxGoooo
+				logp endsection
+				logp info "Installatie succesvol! De computer is nu klaar voor gebruik en zal over vijf seconde vanzelf opnieuw opstarten!"
+				sleep 5 reboot
+			else
+				logp fatal "Installatie helaas mislukt! :("
+			fi
 		fi
 	fi
 elif [ "$mountEnv" = "A" ]; then

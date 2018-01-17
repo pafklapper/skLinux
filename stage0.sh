@@ -174,5 +174,9 @@ announce "Marking BEHEER for first install..." && \
 arch-chroot /mnt touch /skLinuxGoooo
 check_fail $?
 
+announce "Setting EFI file to reboot to the internal harddisk on next boot ..." && \
+sleep 1 # EFIBOOTMGR
+check_fail $?
+
 # reboot / warning / telegram hier
 exit 0
