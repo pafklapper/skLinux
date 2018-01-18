@@ -1,1 +1,1 @@
-A bunch of scripts I use to to automate the deployment and maintenance of a number of Linux laptops. Commits are used mainly to push code from A to B.
+A bunch of scripts I use to to automate the deployment and maintenance of a number of Linux laptops. Commits are used mainly to push code from A to B. Discontinued because the sollution turned out to be unfeasible due to bad drivers for Baytrail laptop/tablets.
