@@ -198,7 +198,7 @@ announce "Setting hostname..." && \
 echo ${targetHostname} > /mnt/SLICE-A/etc/hostname
 check_fail $?
 
-# als je dit wachtwoord leest ben je al zover gevorderd dat je 't wachtwoord van mij mag hebben :)
+# dit wachtwoord wordt nog vervangen door een variabelen :)
 announce "Setting up users..." && \
 arch-chroot /mnt/SLICE-A useradd -m "leerling" && arch-chroot /mnt/SLICE-A useradd -m "leraar" && arch-chroot /mnt/SLICE-A useradd -m "beheer" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd leraar" && arch-chroot /mnt/SLICE-A sh -c "echo -e \"r3pelsteeltje\nr3pelsteeltje\" | passwd beheer" && arch-chroot /mnt/SLICE-A usermod beheer -a -G wheel
 check_fail $?
